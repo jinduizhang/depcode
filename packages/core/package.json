@@ -1,0 +1,67 @@
+{
+  "name": "@depcode/core",
+  "version": "0.1.0",
+  "description": "Core library for depcode - dependency analysis tool",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./storage": {
+      "types": "./dist/storage/index.d.ts",
+      "import": "./dist/storage/index.js"
+    },
+    "./storage/adapter": {
+      "types": "./dist/storage/adapter/index.d.ts",
+      "import": "./dist/storage/adapter/index.js"
+    },
+    "./storage/adapter/factory": {
+      "types": "./dist/storage/adapter/factory.d.ts",
+      "import": "./dist/storage/adapter/factory.js"
+    },
+    "./storage/service": {
+      "types": "./dist/storage/service/index.d.ts",
+      "import": "./dist/storage/service/index.js"
+    },
+    "./storage/service/storage-service": {
+      "types": "./dist/storage/service/storage-service.d.ts",
+      "import": "./dist/storage/service/storage-service.js"
+    },
+    "./storage/repository": {
+      "types": "./dist/storage/repository/index.d.ts",
+      "import": "./dist/storage/repository/index.js"
+    },
+    "./storage/repository/dep-repository": {
+      "types": "./dist/storage/repository/dep-repository.d.ts",
+      "import": "./dist/storage/repository/dep-repository.js"
+    },
+    "./storage/repository/class-repository": {
+      "types": "./dist/storage/repository/class-repository.d.ts",
+      "import": "./dist/storage/repository/class-repository.js"
+    },
+    "./storage/repository/method-repository": {
+      "types": "./dist/storage/repository/method-repository.d.ts",
+      "import": "./dist/storage/repository/method-repository.js"
+    },
+    "./storage/repository/source-repository": {
+      "types": "./dist/storage/repository/source-repository.d.ts",
+      "import": "./dist/storage/repository/source-repository.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "sql.js": "^1.14.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  }
+}
