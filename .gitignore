@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# SQLite databases (user data)
+*.db
+*.sqlite
+
+# Decompiler output
+.decompiled/
+
+# Debug
+*.log
+npm-debug.log*
