@@ -1,5 +1,5 @@
 /**
- * mcp 命令 - 启动 MCP 服务
+ * mcp 命令 - 启动 MCP 服务或生成配置
  */
 
 import * as fs from 'fs';
@@ -23,15 +23,77 @@ import {
 export interface McpOptions {
   transport: string;
   port: string;
+  config: boolean;
+  opencode: boolean;
+}
+
+/**
+ * 生成 MCP 配置 JSON
+ */
+function generateMcpConfig(): object {
+  return {
+    mcp: {
+      depcode: {
+        type: "local",
+        command: ["depcode", "mcp"],
+        enabled: true
+      }
+    }
+  };
+}
+
+/**
+ * 写入 OpenCode 配置文件
+ */
+function writeToOpenCode(projectPath: string): void {
+  const configPath = path.join(projectPath, 'opencode.json');
+  const mcpConfig = generateMcpConfig();
+  
+  let existingConfig: object = {};
+  
+  // 读取现有配置（如果存在）
+  if (fs.existsSync(configPath)) {
+    try {
+      const content = fs.readFileSync(configPath, 'utf-8');
+      existingConfig = JSON.parse(content);
+    } catch (e) {
+      console.error('⚠️  Failed to parse existing opencode.json, will overwrite');
+    }
+  }
+  
+  // 合并配置
+  const mergedConfig = {
+    ...existingConfig,
+    ...mcpConfig
+  };
+  
+  // 写入配置
+  fs.writeFileSync(configPath, JSON.stringify(mergedConfig, null, 2), 'utf-8');
+  console.log(`✅ MCP config written to: ${configPath}`);
+  console.log('\n配置内容:');
+  console.log(JSON.stringify(mcpConfig, null, 2));
 }
 
 export async function mcpCommand(options: McpOptions) {
-  const { transport } = options;
+  const { transport, config, opencode } = options;
+  const projectPath = process.cwd();
   
+  // --config 模式：只输出配置 JSON
+  if (config) {
+    console.log(JSON.stringify(generateMcpConfig(), null, 2));
+    return;
+  }
+  
+  // --opencode 模式：写入配置到 opencode.json
+  if (opencode) {
+    writeToOpenCode(projectPath);
+    return;
+  }
+  
+  // 默认模式：启动 MCP 服务
   console.error('🚀 Starting depcode MCP server...\n');
 
   // 获取项目路径
-  const projectPath = process.cwd();
   const depcodeDir = path.join(projectPath, '.depcode');
   const dbPath = path.join(depcodeDir, 'index.db');
   

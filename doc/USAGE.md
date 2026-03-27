@@ -215,17 +215,54 @@ depcode status
 
 ### `depcode mcp`
 
-启动 MCP (Model Context Protocol) 服务。
+启动 MCP (Model Context Protocol) 服务或生成配置。
 
 ```bash
+# 启动 MCP 服务（stdio 模式）
 depcode mcp
+
+# 输出 MCP 配置 JSON
+depcode mcp --config
+
+# 写入配置到 opencode.json
+depcode mcp --opencode
 ```
+
+**选项:**
+
+| 选项 | 说明 |
+|------|------|
+| `--config` | 输出 MCP 配置 JSON（不启动服务） |
+| `--opencode` | 将 MCP 配置写入 opencode.json |
+| `--transport <type>` | 传输方式 (stdio/http) |
+| `--port <port>` | HTTP 端口 |
 
 ---
 
 ## MCP 集成
 
 depcode 可以作为 MCP Server 集成到 AI 助手中。
+
+### OpenCode 配置
+
+```bash
+# 一键配置（推荐）
+depcode mcp --opencode
+```
+
+配置将自动写入 `opencode.json`：
+
+```json
+{
+  "mcp": {
+    "depcode": {
+      "type": "local",
+      "command": ["depcode", "mcp"],
+      "enabled": true
+    }
+  }
+}
+```
 
 ### Claude Desktop 配置
 
@@ -235,29 +272,16 @@ depcode 可以作为 MCP Server 集成到 AI 助手中。
 {
   "mcpServers": {
     "depcode": {
-      "command": "node",
-      "args": ["/path/to/depcode/packages/cli/dist/index.js", "mcp"],
-      "cwd": "/path/to/your/project"
+      "command": "depcode",
+      "args": ["mcp"]
     }
   }
 }
 ```
 
-### Cursor 配置
+> **注意**: Claude Desktop 需要在项目目录下启动，或配置 `cwd` 参数。
 
-编辑 `.cursor/mcp.json`:
-
-```json
-{
-  "mcp.servers": {
-    "depcode": {
-      "command": "node",
-      "args": ["/path/to/depcode/packages/cli/dist/index.js", "mcp"],
-      "cwd": "/path/to/your/project"
-    }
-  }
-}
-```
+---
 
 ### 可用工具
 
@@ -293,6 +317,64 @@ AI: 查看 com.alibaba.fastjson.JSON 的源码
 
 返回: 2351 行 Java 源码
 ```
+
+---
+
+### 更新索引与重启 MCP
+
+当二方依赖发生变化时（如新增依赖、版本更新），需要重新构建索引并重启 MCP。
+
+#### 完整更新流程
+
+```bash
+# 1. 重新扫描依赖
+depcode init
+
+# 2. 重新构建索引（反编译 + 索引）
+depcode build
+
+# 3. 重启 MCP（见下方方式）
+```
+
+#### 重启 MCP 的方式
+
+| 方式 | 操作 | 适用场景 |
+|------|------|----------|
+| **方式一：重启 AI 客户端** | 关闭 OpenCode/Claude，重新打开 | 推荐，最简单 |
+| **方式二：禁用/启用配置** | 修改 `opencode.json` 中 `enabled: false` → `true` | 不想关闭客户端时 |
+| **方式三：手动终止进程** | `taskkill /F /PID <PID>`，客户端自动重启 | 进程异常时 |
+
+**方式二详细步骤：**
+
+```json
+// 1. 禁用 MCP
+{
+  "mcp": {
+    "depcode": { "enabled": false }
+  }
+}
+
+// 2. 保存后，再启用
+{
+  "mcp": {
+    "depcode": { "enabled": true }
+  }
+}
+```
+
+**方式三详细步骤：**
+
+```bash
+# Windows
+tasklist | findstr node      # 查找进程 PID
+taskkill /F /PID <PID>       # 终止进程
+
+# macOS/Linux
+ps aux | grep depcode
+kill -9 <PID>
+```
+
+> **注意**: MCP 启动时读取 `.depcode/index.db`，只要数据库更新 + 重启 MCP，AI 就能获取最新数据。
 
 ---
 

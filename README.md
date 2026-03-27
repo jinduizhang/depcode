@@ -28,6 +28,9 @@ npm install
 
 # 构建
 npm run build
+
+# 全局安装（可选，推荐）
+npm install -g @depcode/cli
 ```
 
 ### 使用
@@ -36,16 +39,16 @@ npm run build
 cd /path/to/your/maven/project
 
 # 1. 初始化项目（解析依赖）
-node /path/to/depcode/packages/cli/dist/index.js init
+depcode init
 
 # 2. 构建索引（定位JAR → 反编译 → 索引）
-node /path/to/depcode/packages/cli/dist/index.js build
+depcode build
 
 # 3. 搜索类
-node /path/to/depcode/packages/cli/dist/index.js search "JSON" -t class
+depcode search "JSON" -t class
 
-# 4. 启动 MCP 服务
-node /path/to/depcode/packages/cli/dist/index.js mcp
+# 4. 集成到 AI 助手
+depcode mcp --opencode
 ```
 
 ## 文档
@@ -67,7 +70,7 @@ node /path/to/depcode/packages/cli/dist/index.js mcp
 | `depcode analyze` | 分析依赖，生成 SBOM |
 | `depcode search` | 搜索类/方法/字段 |
 | `depcode status` | 查看项目状态 |
-| `depcode mcp` | 启动 MCP 服务 |
+| `depcode mcp` | 启动 MCP 服务 / 生成配置 |
 
 ### MCP 工具
 
@@ -89,8 +92,8 @@ cd /path/to/your/project
 depcode init      # 解析 pom.xml
 depcode build     # 反编译二方件 JAR，构建索引
 
-# 3. 启动 MCP 服务
-depcode mcp
+# 3. 集成到 OpenCode
+depcode mcp --opencode  # 自动写入 opencode.json
 
 # 4. AI 助手可以：
 #    - 输入类名 "JSON" → 找到 com.alibaba.fastjson.JSON

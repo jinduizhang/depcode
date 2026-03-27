@@ -73,9 +73,11 @@ program
 
 program
   .command('mcp')
-  .description('启动 MCP 服务')
+  .description('启动 MCP 服务或生成配置')
   .option('--transport <type>', '传输方式 (stdio|http)', 'stdio')
   .option('--port <port>', 'HTTP 端口', '3000')
+  .option('--config', '输出 MCP 配置 JSON（不启动服务）', false)
+  .option('--opencode', '将 MCP 配置写入 opencode.json', false)
   .action(mcpCommand);
 
 // 解析命令行参数

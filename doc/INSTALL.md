@@ -228,6 +228,60 @@ curl -L -o bin/cfr-0.152.jar \
 
 ---
 
+## 集成到 AI 助手
+
+### OpenCode 集成
+
+```bash
+# 1. 全局安装 depcode
+npm install -g @depcode/cli
+
+# 2. 在项目目录下初始化
+cd /path/to/your/project
+depcode init
+depcode build
+
+# 3. 生成 MCP 配置
+depcode mcp --opencode
+```
+
+配置将自动写入 `opencode.json`：
+
+```json
+{
+  "mcp": {
+    "depcode": {
+      "type": "local",
+      "command": ["depcode", "mcp"],
+      "enabled": true
+    }
+  }
+}
+```
+
+### 手动配置
+
+如果需要手动配置，可以使用 `--config` 输出配置 JSON：
+
+```bash
+depcode mcp --config
+```
+
+输出：
+```json
+{
+  "mcp": {
+    "depcode": {
+      "type": "local",
+      "command": ["depcode", "mcp"],
+      "enabled": true
+    }
+  }
+}
+```
+
+---
+
 ## 下一步
 
 - [使用文档](./USAGE.md) - 学习如何使用 depcode
